@@ -3,9 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.17.1/dist/css/uikit.min.css" />
     <title>Todo</title>
 </head>
 <body>
-    <script src="./js/script.js"></script>
+    <div id="app">
+        <div class="uk-container">
+            <form name="add-task">
+                <input type="text" placeholder="Заголовок" name="title" class="uk-input">
+                <textarea placeholder="Описание" name="description" class="uk-textarea"></textarea>
+                <button class="button uk-button uk-button-default">Добавить</button>
+            </form>
+            <div class="tasks-container"></div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.17.1/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.17.1/dist/js/uikit-icons.min.js"></script>
+    <script type="module" src="./js/script.js"></script>
 </body>
 </html>

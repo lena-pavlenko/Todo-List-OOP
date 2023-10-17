@@ -58,10 +58,13 @@ class Tasks {
 
     static #renderTemplate(task) {
         const taskTemplate = `
-            <div class="task" data-id=${task.id}>
-                <h3>${task.title}</h3>
+            <div class="task uk-card uk-card-body uk-card-default uk-margin" data-id=${task.id}>
+                <h3 class="uk-card-title">${task.title}</h3>
                 <p>${task.description}</p>
-                <button class="uk-button uk-button-danger">Удалить</button>
+                <div class="uk-flex uk-flex-wrap">
+                    <button class="uk-button uk-button-danger">Удалить</button>
+                    <button class="uk-button uk-button-primary">Завершить</button>
+                </div>
             </div>
         `
 

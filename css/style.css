@@ -1,0 +1,21 @@
+.task {
+    border: 1px solid transparent;
+}
+
+.task.completed {
+    border: 1px solid green;
+}
+
+.task.completed .uk-button-primary {
+    pointer-events: none;
+    background-color: gray;
+}
+
+.task .uk-flex {
+    gap: 5px;
+}
+
+.task .uk-button {
+    flex: 1;
+    max-width: 140px;
+}

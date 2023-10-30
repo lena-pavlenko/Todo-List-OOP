@@ -1,25 +1,18 @@
 import Task from "./Task.js";
+import TaskStorage from "./TaskStorage.js";
 
 class Tasks {
     static #storage = []
 
     static #getTasks() {
-        const tasks = JSON.parse(localStorage.getItem('todoList'))
-        if (!tasks) return
-        tasks.forEach(task => {
-            const newTask = new Task(task.title, task.description, task.id)
-            if (task.isDeleted) newTask.isDeleted = true
-            if (task.isCompleted) newTask.isCompleted = true
-            Tasks.#storage.push(newTask)
-        })
+        Tasks.#storage = TaskStorage.initStorage()
     }
 
     static init(appContainer) {
-        Tasks.#getTasks()
-
         const form = appContainer.querySelector('form[name="add-task"]')
         const tasksContainer = appContainer.querySelector('.tasks-container')
 
+        Tasks.#getTasks()
         Tasks.#renderTasks(tasksContainer)
 
         form.addEventListener('submit', function(e) {
@@ -29,19 +22,27 @@ class Tasks {
             const newTask = Tasks.#createTask(title, description)
             
             Tasks.#storage.push(newTask)
-            Tasks.#recordTasks()
+            TaskStorage.addStorage(Tasks.#storage)
             tasksContainer.insertAdjacentHTML('beforeend', Tasks.#renderTemplate(newTask))
+
+            form.reset()
         })
 
         tasksContainer.addEventListener('click', function(e) {
-            if (e.target.closest('.uk-button-danger')) {  
-                const btn = e.target.closest('.uk-button-danger')
+            if (e.target.closest('.uk-button')) {
+                const btn = e.target.closest('.uk-button')
                 const parent = btn.closest('.task')
                 const dataId = parent.dataset.id
-                
-                Tasks.#getTaskById(dataId).isDeleted = true
-                Tasks.#recordTasks()
 
+                if (btn.classList.contains('uk-button-danger')) {
+                    Tasks.#removeTask(dataId)
+                }
+    
+                if (btn.classList.contains('uk-button-primary')) {
+                    Tasks.#completeTask(dataId)
+                }
+
+                TaskStorage.addStorage(Tasks.#storage)
                 Tasks.#renderTasks(tasksContainer)
             }
         })
@@ -52,13 +53,17 @@ class Tasks {
         return task
     }
 
-    static #recordTasks() {
-        localStorage.setItem('todoList', JSON.stringify(Tasks.#storage))
+    static #removeTask(idTask) {
+        Tasks.#getTaskById(idTask).delete()
+    }
+
+    static #completeTask(idTask) {
+        Tasks.#getTaskById(idTask).complete()
     }
 
     static #renderTemplate(task) {
         const taskTemplate = `
-            <div class="task uk-card uk-card-body uk-card-default uk-margin" data-id=${task.id}>
+            <div class="task uk-card uk-card-body uk-card-default uk-margin ${task.isCompleted ? 'completed' : ''}" data-id=${task.id}>
                 <h3 class="uk-card-title">${task.title}</h3>
                 <p>${task.description}</p>
                 <div class="uk-flex uk-flex-wrap">
@@ -72,6 +77,7 @@ class Tasks {
     }
 
     static #renderTasks(containerTasks) {
+        if (!Tasks.#storage) return
         containerTasks.innerHTML = ''
         Tasks.#storage.forEach(task => {
             if (!task.isDeleted) {
@@ -80,16 +86,11 @@ class Tasks {
         });
     }
 
-    static #removeTask(idTask) {
-
-    }
-
     static #getTaskById(id) {
         const taskFinded = Tasks.#storage.find(task => task.id == id)
 
         return taskFinded
     }
-
 }
 
 export default Tasks
